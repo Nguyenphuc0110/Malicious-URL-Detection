@@ -1,7 +1,7 @@
 # NOTE QUÁ TRÌNH XỬ LÝ DỮ LIỆU A1–A5
 
 ## Mục đích
-Ghi lại các thay đổi, quyết định và kết quả thực tế trong quá trình Phúc thực hiện A1–A5 để cả nhóm biết dữ liệu hiện tại khác gì so với kế hoạch ban đầu.
+Ghi lại các thay đổi, quyết định và kết quả thực tế trong quá trình thực hiện A1–A5 để cả nhóm biết dữ liệu hiện tại khác gì so với kế hoạch ban đầu.
 
 ## A1 – Source A
 
