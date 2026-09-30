@@ -1,0 +1,4 @@
+split,rows,domains,row_percentage
+train,447075,108191,70.62
+validation,104798,23184,16.55
+test_A,81162,23184,12.82
