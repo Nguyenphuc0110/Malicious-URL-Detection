@@ -3,6 +3,8 @@ from urllib.parse import (
     urlunsplit,
 )
 
+import importlib.util
+from pathlib import Path
 import re
 import unicodedata
 
@@ -10,13 +12,54 @@ import idna
 
 
 # ============================================================
+# LOAD HOMOGLYPH MODULE
+# ============================================================
+
+# Vì tên file bắt đầu bằng "02_" nên không import theo cách
+# thông thường. Load trực tiếp từ file cùng thư mục.
+
+HOMOGLYPH_FILE = Path(__file__).with_name(
+    "02_homoglyph_normalization.py"
+)
+
+_homoglyph_spec = importlib.util.spec_from_file_location(
+    "homoglyph_normalization",
+    HOMOGLYPH_FILE
+)
+
+if (
+    _homoglyph_spec is None
+    or _homoglyph_spec.loader is None
+):
+    raise ImportError(
+        "Cannot load 02_homoglyph_normalization.py"
+    )
+
+_homoglyph_module = importlib.util.module_from_spec(
+    _homoglyph_spec
+)
+
+_homoglyph_spec.loader.exec_module(
+    _homoglyph_module
+)
+
+normalize_homoglyph_host = (
+    _homoglyph_module.normalize_homoglyph_host
+)
+
+
+# ============================================================
 # CONFIG
 # ============================================================
 
-# Các tracking parameter có độ chắc chắn cao.
+# Chỉ loại các tracking parameter có độ chắc chắn cao.
 #
-# Không xóa "ref" / "referrer" vì chúng có thể là
-# parameter chức năng của website.
+# Không xóa:
+#   ref
+#   referrer
+#
+# vì chúng có thể là parameter chức năng thực sự.
+
 TRACKING_PARAMS = {
     "gclid",
     "fbclid",
@@ -65,14 +108,19 @@ def is_tracking_param(key):
 
 def normalize_host(host):
     """
-    Chuẩn hóa hostname.
+    Chuẩn hóa hostname theo thứ tự:
 
-    Thực hiện:
-        - strip whitespace
-        - lowercase
-        - Unicode NFKC normalization
-        - bỏ dấu chấm cuối domain
-        - decode punycode / IDN nếu có thể
+        lowercase
+            ↓
+        Unicode NFKC
+            ↓
+        bỏ trailing dot
+            ↓
+        decode IDN / punycode
+            ↓
+        homoglyph normalization
+            ↓
+        lowercase lần cuối
 
     Ví dụ:
 
@@ -80,13 +128,14 @@ def normalize_host(host):
             ->
         example.com
 
-        example.com.
-            ->
-        example.com
-
         xn--bcher-kva.example
             ->
         bücher.example
+
+        pаypal.com
+          ↑ Cyrillic а
+            ->
+        paypal.com
     """
 
     if not host:
@@ -94,7 +143,7 @@ def normalize_host(host):
 
     host = str(host).strip().lower()
 
-    # Unicode normalization
+    # Unicode canonical normalization
     host = unicodedata.normalize(
         "NFKC",
         host
@@ -103,7 +152,10 @@ def normalize_host(host):
     # example.com. -> example.com
     host = host.rstrip(".")
 
-    # Decode Punycode / IDN
+    # --------------------------------------------------------
+    # IDN / PUNYCODE
+    # --------------------------------------------------------
+
     try:
 
         host = idna.decode(
@@ -112,10 +164,22 @@ def normalize_host(host):
 
     except Exception:
 
-        # Nếu không decode được thì giữ nguyên hostname
+        # Nếu không decode được thì giữ nguyên.
         pass
 
-    return host
+
+    # --------------------------------------------------------
+    # HOMOGLYPH NORMALIZATION
+    # --------------------------------------------------------
+
+    host = normalize_homoglyph_host(
+        host
+    )
+
+    if not host:
+        return None
+
+    return host.lower()
 
 
 # ============================================================
@@ -124,16 +188,15 @@ def normalize_host(host):
 
 def clean_query(query):
     """
-    Loại tracking parameters nhưng cố gắng giữ nguyên
-    representation của query còn lại.
-
-    QUAN TRỌNG:
+    Loại tracking parameters nhưng giữ nguyên representation
+    của các query parameter còn lại.
 
     Không dùng:
+
         parse_qsl()
         urlencode()
 
-    Vì các hàm trên có thể biến đổi URL:
+    vì có thể làm thay đổi lexical representation:
 
         node/514
             ->
@@ -146,9 +209,6 @@ def clean_query(query):
         ?flag
             ->
         ?flag=
-
-    Hàm này chỉ xác định key của từng raw query segment
-    rồi loại segment nếu đó là tracking parameter.
 
     Ví dụ:
 
@@ -170,17 +230,16 @@ def clean_query(query):
 
     for part in parts:
 
-        # ----------------------------------------
-        # Empty query segment
-        # ----------------------------------------
+        # ----------------------------------------------------
+        # EMPTY SEGMENT
+        # ----------------------------------------------------
+
+        # Giữ segment rỗng để hạn chế thay đổi lexical
+        # representation không cần thiết.
         #
-        # Giữ lại để không tự ý sửa lexical form:
-        #
-        # a=1&&b=2
-        # a=1&
-        #
-        # Những trường hợp này có thể có giá trị
-        # đối với lexical feature của model.
+        # Ví dụ:
+        #   a=1&&b=2
+        #   a=1&
 
         if part == "":
 
@@ -191,9 +250,9 @@ def clean_query(query):
             continue
 
 
-        # ----------------------------------------
-        # GET PARAMETER KEY
-        # ----------------------------------------
+        # ----------------------------------------------------
+        # GET RAW KEY
+        # ----------------------------------------------------
 
         if "=" in part:
 
@@ -204,11 +263,8 @@ def clean_query(query):
 
         else:
 
-            # dạng:
-            #
+            # Ví dụ:
             # ?flag
-            #
-            # Không tự đổi thành flag=
             key = part
 
 
@@ -219,9 +275,9 @@ def clean_query(query):
         )
 
 
-        # ----------------------------------------
+        # ----------------------------------------------------
         # REMOVE TRACKING PARAM
-        # ----------------------------------------
+        # ----------------------------------------------------
 
         if is_tracking_param(
             key_lower
@@ -229,17 +285,17 @@ def clean_query(query):
             continue
 
 
-        # ----------------------------------------
-        # KEEP RAW PARAMETER
-        # ----------------------------------------
+        # ----------------------------------------------------
+        # KEEP ORIGINAL RAW PARAMETER
+        # ----------------------------------------------------
 
         cleaned.append(
             part
         )
 
 
-    # Nếu tất cả parameter thật đều bị loại và
-    # chỉ còn separator rỗng thì bỏ query luôn.
+    # Nếu sau khi bỏ tracking parameter chỉ còn các
+    # segment rỗng thì bỏ toàn bộ query.
     if not any(
         part != ""
         for part in cleaned
@@ -260,35 +316,40 @@ def canonicalize_url(url):
     """
     Defense D1 - URL canonicalization.
 
-    Thực hiện:
+    Các bước:
 
     1. strip whitespace
     2. đổi &amp; -> &
     3. thêm http:// nếu thiếu scheme
     4. lowercase scheme
-    5. lowercase + normalize hostname
-    6. decode punycode
-    7. bỏ default ports:
+    5. normalize hostname
+    6. decode IDN / punycode
+    7. normalize Unicode homoglyph
+    8. bỏ default ports:
            HTTP  -> 80
            HTTPS -> 443
            FTP   -> 21
-    8. giữ nguyên path
-    9. loại tracking parameters
-    10. bỏ fragment
-    11. giữ nguyên percent encoding
-    12. hỗ trợ HTTP / HTTPS / FTP
+    9. giữ nguyên path
+    10. loại tracking parameters
+    11. bỏ fragment
+    12. giữ nguyên percent encoding
 
-    Không truy cập URL và không gửi network request.
+    Hỗ trợ:
+        http
+        https
+        ftp
+
+    Hàm KHÔNG truy cập URL và KHÔNG gửi network request.
 
     Return:
-        canonical URL
+        canonicalized URL
 
     Nếu URL không thể xử lý:
         None
     """
 
     # ========================================================
-    # NULL / EMPTY CHECK
+    # NULL / EMPTY
     # ========================================================
 
     if url is None:
@@ -306,17 +367,15 @@ def canonicalize_url(url):
     # HTML-ESCAPED AMPERSAND
     # ========================================================
 
-    # Chỉ decode "&amp;".
+    # Chỉ decode:
     #
-    # KHÔNG dùng:
+    # &amp;
     #
-    # html.unescape(url)
-    #
-    # vì ví dụ:
+    # Không dùng html.unescape() vì:
     #
     # &region1
     #
-    # có thể bị hiểu sai thành:
+    # có thể bị hiểu thành:
     #
     # ®ion1
 
@@ -365,9 +424,6 @@ def canonicalize_url(url):
         .strip()
     )
 
-    # Dataset có ít nhất một phishing URL dùng FTP.
-    #
-    # Không đổi ftp -> http vì sẽ thay đổi URL gốc.
     if scheme not in (
         "http",
         "https",
@@ -399,10 +455,7 @@ def canonicalize_url(url):
     except ValueError:
 
         # Ví dụ:
-        #
         # http://example.com:abc/
-        #
-        # port không hợp lệ.
         return None
 
 
@@ -437,11 +490,11 @@ def canonicalize_url(url):
     # USER INFO
     # ========================================================
 
-    # Giữ lại userinfo nếu URL có dạng:
+    # Giữ lại userinfo nếu tồn tại:
     #
     # http://user:password@example.com/
     #
-    # Vì đây cũng có thể là lexical information quan trọng.
+    # vì đây có thể là lexical feature quan trọng.
 
     userinfo = ""
 
@@ -465,13 +518,7 @@ def canonicalize_url(url):
 
     # urlsplit().hostname trả IPv6 không có [].
     #
-    # Khi rebuild URL phải thêm lại []:
-    #
-    # 2001:db8::1
-    #
-    # ->
-    #
-    # [2001:db8::1]
+    # Khi rebuild phải đưa [] trở lại.
 
     if (
         ":" in host
@@ -517,13 +564,12 @@ def canonicalize_url(url):
     # Giữ nguyên path.
     #
     # Không:
-    #
-    # - decode percent encoding
-    # - encode lại
     # - lowercase path
+    # - decode percent encoding
+    # - encode lại path
     # - tự thêm "/"
     #
-    # Vì những thay đổi này có thể làm mất lexical features.
+    # để tránh thay đổi lexical feature của model.
 
     path = parsed.path
 
@@ -541,10 +587,7 @@ def canonicalize_url(url):
     # FRAGMENT
     # ========================================================
 
-    # Fragment không được gửi tới HTTP server.
-    #
-    # D1 canonicalization bỏ fragment.
-
+    # Fragment không gửi tới HTTP server.
     fragment = ""
 
 
@@ -585,7 +628,6 @@ if __name__ == "__main__":
 
         (
             "HTTP://EXAMPLE.COM/Login",
-
             "http://example.com/Login"
         ),
 
@@ -620,7 +662,7 @@ if __name__ == "__main__":
 
         # ====================================================
         # TEST 4
-        # Facebook tracking
+        # FBCLID
         # ====================================================
 
         (
@@ -638,7 +680,6 @@ if __name__ == "__main__":
 
         (
             "https://example.com/page#section1",
-
             "https://example.com/page"
         ),
 
@@ -650,7 +691,6 @@ if __name__ == "__main__":
 
         (
             "http://example.com:80/login",
-
             "http://example.com/login"
         ),
 
@@ -662,19 +702,17 @@ if __name__ == "__main__":
 
         (
             "https://example.com:443/login",
-
             "https://example.com/login"
         ),
 
 
         # ====================================================
         # TEST 8
-        # Non-default port must remain
+        # Non-default port remains
         # ====================================================
 
         (
             "https://example.com:8443/login",
-
             "https://example.com:8443/login"
         ),
 
@@ -700,7 +738,6 @@ if __name__ == "__main__":
 
         (
             "example.com/login",
-
             "http://example.com/login"
         ),
 
@@ -720,24 +757,22 @@ if __name__ == "__main__":
 
         # ====================================================
         # TEST 12
-        # Root URL: do NOT add /
+        # Root URL - do not add /
         # ====================================================
 
         (
             "https://example.com",
-
             "https://example.com"
         ),
 
 
         # ====================================================
         # TEST 13
-        # Trailing dot hostname
+        # Trailing dot
         # ====================================================
 
         (
             "https://example.com./login",
-
             "https://example.com/login"
         ),
 
@@ -749,14 +784,13 @@ if __name__ == "__main__":
 
         (
             "https://xn--bcher-kva.example/path",
-
             "https://bücher.example/path"
         ),
 
 
         # ====================================================
         # TEST 15
-        # Preserve slash inside query value
+        # Preserve slash in query
         # ====================================================
 
         (
@@ -784,19 +818,18 @@ if __name__ == "__main__":
 
         # ====================================================
         # TEST 17
-        # Preserve flag-style query parameter
+        # Preserve flag-style query
         # ====================================================
 
         (
             "https://example.com/page?lca",
-
             "https://example.com/page?lca"
         ),
 
 
         # ====================================================
         # TEST 18
-        # Remove UTM without re-encoding normal value
+        # Remove UTM without re-encoding value
         # ====================================================
 
         (
@@ -834,6 +867,30 @@ if __name__ == "__main__":
 
             "ftp://221.131.136.22/"
             "inloggen/abnamro.nl.htm"
+        ),
+
+
+        # ====================================================
+        # TEST 21
+        # Cyrillic homoglyph:
+        # "а" below is Cyrillic, not Latin a
+        # ====================================================
+
+        (
+            "https://pаypal.com/login",
+            "https://paypal.com/login"
+        ),
+
+
+        # ====================================================
+        # TEST 22
+        # Multiple Cyrillic homoglyphs:
+        # both "о" below are Cyrillic
+        # ====================================================
+
+        (
+            "https://gооgle.com/login",
+            "https://google.com/login"
         ),
 
     ]
