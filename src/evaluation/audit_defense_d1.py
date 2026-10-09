@@ -5,27 +5,12 @@ import pandas as pd
 
 
 # ============================================================
-# LOAD DEFENSE MODULE
+# CONFIG
 # ============================================================
 
-DEFENSE_FILE = Path(
+CANONICALIZATION_FILE = Path(
     "src/defense/01_url_canonicalization.py"
 )
-
-spec = importlib.util.spec_from_file_location(
-    "url_canonicalization",
-    DEFENSE_FILE
-)
-
-module = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(module)
-
-canonicalize_url = module.canonicalize_url
-
-
-# ============================================================
-# DATASETS
-# ============================================================
 
 FILES = {
     "val":
@@ -36,98 +21,454 @@ FILES = {
 
     "test_B":
         Path("data/processed/handoff/test_B.csv"),
+
+    "test_C":
+        Path("data/processed/handoff/test_C.csv"),
 }
 
+EXAMPLE_COUNT = 10
+
 
 # ============================================================
-# AUDIT
+# LOAD DEFENSE D1 MODULE
 # ============================================================
 
-for name, path in FILES.items():
+def load_canonicalization_module():
+    """
+    Load 01_url_canonicalization.py bằng importlib
+    vì tên file bắt đầu bằng số.
+    """
 
-    if not path.exists():
-        print(
-            f"\n{name}: file not found, skipped"
+    if not CANONICALIZATION_FILE.exists():
+        raise FileNotFoundError(
+            CANONICALIZATION_FILE
         )
-        continue
+
+    spec = importlib.util.spec_from_file_location(
+        "url_canonicalization_module",
+        CANONICALIZATION_FILE,
+    )
+
+    if spec is None or spec.loader is None:
+        raise ImportError(
+            "Cannot load canonicalization module."
+        )
+
+    module = importlib.util.module_from_spec(
+        spec
+    )
+
+    spec.loader.exec_module(
+        module
+    )
+
+    if not hasattr(
+        module,
+        "canonicalize_url",
+    ):
+        raise AttributeError(
+            "01_url_canonicalization.py "
+            "does not define canonicalize_url()."
+        )
+
+    return module
+
+
+# ============================================================
+# AUDIT ONE DATASET
+# ============================================================
+
+def audit_dataset(
+    name,
+    path,
+    canonicalize_url,
+):
+    """
+    Audit Defense D1 canonicalization trên một dataset.
+
+    Kiểm tra:
+      - tổng số rows
+      - số URL bị thay đổi
+      - changed %
+      - số URL canonicalization bị lỗi
+      - changed % theo label
+      - ví dụ URL trước/sau
+    """
 
     print(
         f"\n=== {name} ==="
     )
 
+    if not path.exists():
+        raise FileNotFoundError(
+            path
+        )
+
     df = pd.read_csv(
         path,
-        usecols=["url", "label"]
+        low_memory=False,
     )
 
-    df["canonical_url"] = (
-        df["url"]
-        .apply(canonicalize_url)
+    required_columns = {
+        "url",
+        "label",
+    }
+
+    missing_columns = (
+        required_columns
+        - set(df.columns)
     )
 
-    df["changed"] = (
-        df["url"]
-        != df["canonical_url"]
+    if missing_columns:
+        raise ValueError(
+            f"{name}: missing columns "
+            f"{missing_columns}"
+        )
+
+    total_rows = len(
+        df
     )
 
-    df["failed"] = (
-        df["canonical_url"].isna()
+    canonical_urls = []
+    failed_flags = []
+
+    # ========================================================
+    # CANONICALIZE
+    # ========================================================
+
+    for value in df["url"]:
+
+        if pd.isna(value):
+
+            canonical_urls.append(
+                None
+            )
+
+            failed_flags.append(
+                True
+            )
+
+            continue
+
+        url = str(
+            value
+        )
+
+        try:
+
+            canonical = canonicalize_url(
+                url
+            )
+
+            # Nếu function trả None thì tính là failed.
+            if canonical is None:
+
+                canonical_urls.append(
+                    None
+                )
+
+                failed_flags.append(
+                    True
+                )
+
+            else:
+
+                canonical_urls.append(
+                    str(canonical)
+                )
+
+                failed_flags.append(
+                    False
+                )
+
+        except Exception:
+
+            canonical_urls.append(
+                None
+            )
+
+            failed_flags.append(
+                True
+            )
+
+    # ========================================================
+    # ADD TEMP COLUMNS
+    # ========================================================
+
+    audit_df = df.copy()
+
+    audit_df[
+        "canonical_url"
+    ] = canonical_urls
+
+    audit_df[
+        "failed"
+    ] = failed_flags
+
+    audit_df[
+        "changed"
+    ] = (
+        ~audit_df[
+            "failed"
+        ]
+        & (
+            audit_df[
+                "url"
+            ].astype(str)
+            != audit_df[
+                "canonical_url"
+            ].astype(str)
+        )
     )
+
+    # ========================================================
+    # COUNTS
+    # ========================================================
+
+    changed_count = int(
+        audit_df[
+            "changed"
+        ].sum()
+    )
+
+    failed_count = int(
+        audit_df[
+            "failed"
+        ].sum()
+    )
+
+    changed_percent = (
+        changed_count
+        / total_rows
+        * 100
+        if total_rows > 0
+        else 0.0
+    )
+
+    # ========================================================
+    # MAIN OUTPUT
+    # ========================================================
 
     print(
         "Rows:",
-        len(df)
+        total_rows
     )
 
     print(
         "Changed:",
-        int(df["changed"].sum())
+        changed_count
     )
 
     print(
         "Changed %:",
-        round(
-            df["changed"].mean() * 100,
-            2
-        )
+        f"{changed_percent:.2f}"
     )
 
     print(
         "Failed:",
-        int(df["failed"].sum())
+        failed_count
     )
+
+    # ========================================================
+    # CHANGED BY LABEL
+    # ========================================================
 
     print(
         "\nChanged by label:"
     )
 
-    for label in [0, 1]:
+    labels = sorted(
+        audit_df[
+            "label"
+        ]
+        .dropna()
+        .unique()
+        .tolist()
+    )
 
-        subset = df[
-            df["label"] == label
+    for label in labels:
+
+        subset = audit_df[
+            audit_df[
+                "label"
+            ] == label
         ]
 
-        if len(subset) == 0:
-            continue
+        if len(
+            subset
+        ) == 0:
+
+            changed_label_percent = 0.0
+
+        else:
+
+            changed_label_percent = (
+                subset[
+                    "changed"
+                ].mean()
+                * 100
+            )
 
         print(
             f"label {label}: "
-            f"{subset['changed'].mean() * 100:.2f}%"
+            f"{changed_label_percent:.2f}%"
         )
 
+    # ========================================================
+    # EXAMPLES
+    # ========================================================
 
     print(
         "\nExamples:"
     )
 
-    examples = df[
-        df["changed"]
+    examples = audit_df[
+        audit_df[
+            "changed"
+        ]
     ][
-        ["url", "canonical_url"]
-    ].head(10)
+        [
+            "url",
+            "canonical_url",
+        ]
+    ].head(
+        EXAMPLE_COUNT
+    )
+
+    if examples.empty:
+
+        print(
+            "No changed URLs."
+        )
+
+    else:
+
+        print(
+            examples.to_string(
+                index=False
+            )
+        )
+
+    # ========================================================
+    # HARD CHECK
+    # ========================================================
+
+    assert (
+        failed_count
+        == 0
+    ), (
+        f"{name}: canonicalization "
+        f"failed for {failed_count} URLs"
+    )
+
+    return {
+        "dataset": name,
+        "rows": total_rows,
+        "changed": changed_count,
+        "changed_percent": round(
+            changed_percent,
+            2,
+        ),
+        "failed": failed_count,
+    }
+
+
+# ============================================================
+# MAIN
+# ============================================================
+
+def main():
+
+    # ========================================================
+    # LOAD D1
+    # ========================================================
+
+    module = (
+        load_canonicalization_module()
+    )
+
+    canonicalize_url = (
+        module.canonicalize_url
+    )
+
+    summaries = []
+
+    # ========================================================
+    # AUDIT VAL / TEST A / TEST B / TEST C
+    # ========================================================
+
+    for name, path in (
+        FILES.items()
+    ):
+
+        result = audit_dataset(
+            name,
+            path,
+            canonicalize_url,
+        )
+
+        summaries.append(
+            result
+        )
+
+    # ========================================================
+    # SUMMARY
+    # ========================================================
+
+    summary_df = pd.DataFrame(
+        summaries
+    )
 
     print(
-        examples.to_string(
+        "\n========================================"
+    )
+
+    print(
+        "DEFENSE D1 AUDIT SUMMARY"
+    )
+
+    print(
+        "========================================"
+    )
+
+    print(
+        summary_df.to_string(
             index=False
         )
     )
+
+    total_failed = int(
+        summary_df[
+            "failed"
+        ].sum()
+    )
+
+    print(
+        "\nTotal failed:",
+        total_failed
+    )
+
+    assert (
+        total_failed
+        == 0
+    )
+
+    print(
+        "\n========================================"
+    )
+
+    print(
+        "DEFENSE D1 AUDIT PASSED"
+    )
+
+    print(
+        "========================================"
+    )
+
+
+# ============================================================
+# ENTRY POINT
+# ============================================================
+
+if __name__ == "__main__":
+    main()
