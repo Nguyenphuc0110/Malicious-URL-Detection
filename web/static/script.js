@@ -206,3 +206,55 @@ form.addEventListener("submit", async function (event) {
         buttonLabel.textContent = "Scan URL";
     }
 });
+
+/* DIGITAL FORENSIC BINARY V1 */
+
+(function () {
+    if (document.querySelector(".binary-rain")) {
+        return;
+    }
+
+    function createColumn(side) {
+        const element = document.createElement("div");
+
+        element.className = "binary-rain binary-" + side;
+        element.setAttribute("aria-hidden", "true");
+
+        document.body.appendChild(element);
+
+        return element;
+    }
+
+    const left = createColumn("left");
+    const right = createColumn("right");
+
+    function generateBinary() {
+        const lines = [];
+
+        for (let i = 0; i < 55; i++) {
+            let line = "";
+
+            for (let j = 0; j < 5; j++) {
+                line += Math.random() < 0.5 ? "0  " : "1  ";
+            }
+
+            lines.push(line.trim());
+        }
+
+        return lines.join("\n");
+    }
+
+    function updateBinary() {
+        left.textContent = generateBinary();
+        right.textContent = generateBinary();
+    }
+
+    updateBinary();
+
+    if (!window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches) {
+        setInterval(updateBinary, 6000);
+    }
+})();
+

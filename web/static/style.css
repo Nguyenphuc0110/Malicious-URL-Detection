@@ -667,3 +667,550 @@ body::before {
         scroll-behavior: auto !important;
     }
 }
+
+/* DIGITAL FORENSIC THEME V1 */
+
+:root {
+    --bg: #03111b;
+    --surface: #0b202d;
+    --surface-light: #112d3b;
+    --border: rgba(56, 207, 174, 0.20);
+    --text: #e8f7fa;
+    --muted: #8daeb9;
+    --cyan: #35c4df;
+    --purple: #34c49c;
+    --green: #38deb0;
+}
+
+body {
+    background: #03111b;
+}
+
+body::before {
+    background:
+        radial-gradient(
+            ellipse at 15% 25%,
+            rgba(18, 114, 159, 0.18),
+            transparent 48%
+        ),
+        radial-gradient(
+            ellipse at 85% 55%,
+            rgba(11, 133, 101, 0.13),
+            transparent 45%
+        ),
+        linear-gradient(
+            135deg,
+            #020a13,
+            #061827 50%,
+            #031713
+        );
+}
+
+/* LUOI KY THUAT SO MO */
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
+    background-image:
+        linear-gradient(
+            rgba(54, 219, 171, 0.12) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(54, 219, 171, 0.12) 1px,
+            transparent 1px
+        );
+
+    background-size: 48px 48px;
+    opacity: 0.16;
+}
+
+.site-shell {
+    position: relative;
+    z-index: 1;
+}
+
+/* HAI COT SO NHI PHAN */
+
+.binary-rain {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 155px;
+    padding: 20px 12px;
+    overflow: hidden;
+
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.8;
+    letter-spacing: 3px;
+    white-space: pre;
+
+    color: rgba(71, 255, 190, 0.27);
+    text-shadow:
+        0 0 9px rgba(47, 231, 172, 0.24);
+
+    opacity: 0.55;
+
+    mask-image: linear-gradient(
+        to bottom,
+        transparent,
+        black 15%,
+        black 85%,
+        transparent
+    );
+}
+
+.binary-left {
+    left: 0;
+    text-align: left;
+}
+
+.binary-right {
+    right: 0;
+    text-align: right;
+}
+
+/* ANH SANG NEN */
+
+.glow-one {
+    background: #087ca4;
+    opacity: 0.17;
+}
+
+.glow-two {
+    background: #087d5b;
+    opacity: 0.16;
+}
+
+/* TIEU DE */
+
+.hero h1 {
+    text-shadow:
+        0 0 30px rgba(28, 182, 189, 0.11);
+}
+
+.hero h1 span {
+    background: linear-gradient(
+        90deg,
+        #35d9c1,
+        #35b9e8,
+        #58cda5
+    );
+
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+/* PHONG CACH DIGITAL FORENSIC */
+
+.section-kicker,
+.eyebrow,
+.model-tag,
+.brand-text small {
+    font-family: Consolas, monospace;
+    letter-spacing: 1.6px;
+    color: #45dfb7;
+}
+
+.scanner-panel {
+    background: linear-gradient(
+        145deg,
+        rgba(9, 33, 46, 0.97),
+        rgba(5, 23, 36, 0.97)
+    );
+
+    border: 1px solid rgba(61, 218, 178, 0.28);
+
+    box-shadow:
+        0 22px 65px rgba(0, 0, 0, 0.34),
+        0 0 35px rgba(36, 171, 151, 0.05);
+}
+
+.result-card {
+    background: linear-gradient(
+        155deg,
+        #0b2231,
+        #091b2a
+    );
+
+    border-color: rgba(61, 218, 178, 0.20);
+}
+
+.defense-card {
+    background: linear-gradient(
+        155deg,
+        #0c292e,
+        #091d2a
+    );
+
+    border-color: rgba(61, 218, 178, 0.30);
+}
+
+.research-card {
+    background: rgba(8, 33, 44, 0.78);
+}
+
+.input-row input {
+    background: #030e19;
+    border-color: rgba(54, 211, 175, 0.27);
+}
+
+.input-row input:focus {
+    border-color: #41dfb4;
+    box-shadow:
+        0 0 0 3px rgba(54, 211, 175, 0.10);
+}
+
+.input-row button {
+    background: linear-gradient(
+        115deg,
+        #36d5ad,
+        #3aaddb
+    );
+
+    box-shadow:
+        0 0 22px rgba(39, 197, 166, 0.12);
+}
+
+.baseline-fill {
+    background: linear-gradient(
+        90deg,
+        #087d9c,
+        #39cbdf
+    );
+}
+
+.defense-fill {
+    background: linear-gradient(
+        90deg,
+        #07866e,
+        #3ce0ab
+    );
+}
+
+.header-badge,
+.offline-badge,
+.results-label {
+    color: #3ad8b2;
+    border-color: rgba(58, 216, 178, 0.24);
+    background: rgba(58, 216, 178, 0.06);
+}
+
+/* KHONG HIEN SO 0 1 TREN MAN HINH NHO */
+
+@media (max-width: 1250px) {
+    .binary-rain {
+        display: none;
+    }
+}
+
+
+/* CYBER DARK OVERRIDE V2 */
+
+:root {
+    --bg: #01060b;
+    --surface: #07131d;
+    --surface-light: #0b1b27;
+    --panel: #081723;
+    --panel-2: #06121c;
+    --text: #ecf8fb;
+    --muted: #8aa4b3;
+    --cyan: #39c6e6;
+    --teal: #35d4a5;
+    --teal-soft: rgba(53, 212, 165, 0.16);
+    --border: rgba(69, 225, 190, 0.18);
+}
+
+body {
+    background: #01060b !important;
+    color: var(--text) !important;
+}
+
+/* nền tối hơn + lạnh hơn */
+body::before {
+    background:
+        radial-gradient(
+            circle at 14% 18%,
+            rgba(0, 123, 150, 0.14),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 84% 16%,
+            rgba(0, 146, 106, 0.08),
+            transparent 26%
+        ),
+        radial-gradient(
+            circle at 88% 76%,
+            rgba(0, 92, 136, 0.11),
+            transparent 34%
+        ),
+        linear-gradient(
+            135deg,
+            #01050a 0%,
+            #04111b 42%,
+            #031019 72%,
+            #020910 100%
+        ) !important;
+}
+
+/* lưới kỹ thuật số mờ */
+body::after {
+    opacity: 0.09 !important;
+    background-image:
+        linear-gradient(
+            rgba(73, 255, 196, 0.07) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(73, 255, 196, 0.06) 1px,
+            transparent 1px
+        ),
+        repeating-linear-gradient(
+            to bottom,
+            rgba(120, 246, 255, 0.018) 0 2px,
+            transparent 2px 6px
+        );
+    background-size:
+        56px 56px,
+        56px 56px,
+        auto;
+}
+
+/* scanline toàn trang */
+.site-shell::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(90, 255, 208, 0.016) 0 1px,
+            transparent 1px 5px
+        );
+    opacity: 0.26;
+    mix-blend-mode: screen;
+}
+
+/* hai cột nhị phân mờ hơn, lạnh hơn */
+.binary-rain {
+    color: rgba(77, 255, 190, 0.18) !important;
+    text-shadow: 0 0 10px rgba(47, 231, 172, 0.18) !important;
+    opacity: 0.42 !important;
+    width: 170px !important;
+}
+
+/* tiêu đề kiểu cyber */
+.hero h1 {
+    text-shadow:
+        0 0 28px rgba(53, 185, 232, 0.16),
+        0 0 60px rgba(53, 217, 193, 0.08) !important;
+}
+
+.hero h1 span {
+    background: linear-gradient(
+        90deg,
+        #46e0b9,
+        #42b9f5,
+        #68d5b6
+    ) !important;
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+    color: transparent !important;
+}
+
+/* thêm dòng forensic dưới hero */
+.hero::after {
+    content: "[ THREAT HUNT ]   [ IOC ANALYSIS ]   [ URL FORENSICS ]";
+    display: block;
+    margin-top: 18px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgba(84, 236, 188, 0.58);
+}
+
+/* card tối hơn, cyber hơn */
+.scanner-panel,
+.result-card,
+.defense-card,
+.research-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(
+        160deg,
+        rgba(5, 18, 28, 0.98),
+        rgba(3, 11, 20, 0.98)
+    ) !important;
+    border: 1px solid rgba(64, 230, 183, 0.18) !important;
+    box-shadow:
+        0 22px 70px rgba(0, 0, 0, 0.46),
+        inset 0 1px 0 rgba(85, 255, 200, 0.03),
+        0 0 24px rgba(26, 165, 145, 0.06) !important;
+}
+
+/* card phòng thủ hơi xanh lá hơn */
+.defense-card {
+    background: linear-gradient(
+        160deg,
+        rgba(4, 22, 24, 0.98),
+        rgba(3, 11, 20, 0.98)
+    ) !important;
+}
+
+/* góc khung cyber */
+.scanner-panel::before,
+.result-card::before,
+.defense-card::before,
+.research-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(90deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) top 16px left 16px / 140px 1px no-repeat,
+        linear-gradient(180deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) top 16px left 16px / 1px 140px no-repeat,
+        linear-gradient(-90deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) top 16px right 16px / 140px 1px no-repeat,
+        linear-gradient(180deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) top 16px right 16px / 1px 140px no-repeat,
+        linear-gradient(90deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) bottom 16px left 16px / 140px 1px no-repeat,
+        linear-gradient(-180deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) bottom 16px left 16px / 1px 140px no-repeat,
+        linear-gradient(-90deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) bottom 16px right 16px / 140px 1px no-repeat,
+        linear-gradient(-180deg, rgba(61,230,185,0.14), rgba(61,230,185,0)) bottom 16px right 16px / 1px 140px no-repeat;
+    opacity: 0.75;
+}
+
+/* thêm lớp quét mờ trên card */
+.scanner-panel::after,
+.result-card::after,
+.defense-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            115deg,
+            transparent 0%,
+            rgba(73, 233, 201, 0.025) 45%,
+            transparent 75%
+        );
+}
+
+/* text phụ */
+.hero p,
+.scanner-panel p,
+.research-card p,
+.result-card p,
+.defense-card p,
+.scanner-panel small {
+    color: #8ca7b6 !important;
+}
+
+/* badge / label */
+.section-kicker,
+.eyebrow,
+.model-tag,
+.header-badge,
+.offline-badge,
+.results-label,
+.brand-text small {
+    font-family: Consolas, monospace !important;
+    letter-spacing: 1.6px !important;
+    color: #44e0b7 !important;
+    border-color: rgba(68, 224, 183, 0.22) !important;
+    background: rgba(68, 224, 183, 0.05) !important;
+}
+
+/* ô nhập */
+.input-row input {
+    background: #020a13 !important;
+    border: 1px solid rgba(68, 224, 183, 0.22) !important;
+    color: #e8fdff !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.01);
+}
+
+.input-row input::placeholder {
+    color: #6d8796 !important;
+}
+
+.input-row input:focus {
+    border-color: #4ce2c0 !important;
+    box-shadow:
+        0 0 0 3px rgba(76, 226, 192, 0.08),
+        0 0 18px rgba(53, 217, 193, 0.08) !important;
+}
+
+/* nút scan */
+.input-row button {
+    background: linear-gradient(
+        120deg,
+        #1c9cae,
+        #36c79c
+    ) !important;
+    color: #031019 !important;
+    box-shadow:
+        0 10px 24px rgba(22, 146, 123, 0.26),
+        0 0 18px rgba(53, 217, 193, 0.12) !important;
+}
+
+.input-row button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+}
+
+/* thanh điểm */
+.baseline-fill {
+    background: linear-gradient(
+        90deg,
+        #109bc0,
+        #45dff1
+    ) !important;
+    box-shadow: 0 0 10px rgba(69, 223, 241, 0.18);
+}
+
+.defense-fill {
+    background: linear-gradient(
+        90deg,
+        #1eab8a,
+        #4ef0be
+    ) !important;
+    box-shadow: 0 0 10px rgba(78, 240, 190, 0.18);
+}
+
+/* tiêu đề kết quả */
+.result-card h3,
+.defense-card h3,
+.scanner-panel h2,
+.research-card h3 {
+    letter-spacing: 0.02em;
+    text-shadow: 0 0 16px rgba(53, 217, 193, 0.06);
+}
+
+/* note / notice */
+.notice,
+.research-notice,
+.warning-box {
+    background: rgba(255, 196, 0, 0.06) !important;
+    border: 1px solid rgba(255, 196, 0, 0.20) !important;
+}
+
+/* ẩn bớt binary trên màn nhỏ */
+@media (max-width: 1250px) {
+    .binary-rain {
+        display: none !important;
+    }
+}
+
