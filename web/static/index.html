@@ -1,0 +1,349 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Malicious URL Detector | AIC211 Security Lab</title>
+
+    <meta
+        name="description"
+        content="AI-powered malicious URL detection and robustness research."
+    >
+
+    <link rel="stylesheet" href="/style.css">
+    <script src="/script.js" defer></script>
+</head>
+
+<body>
+
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <div class="site-shell">
+
+        <!-- NAVIGATION -->
+        <header class="topbar">
+
+            <a href="#" class="brand">
+                <span class="brand-icon">🛡️</span>
+
+                <span class="brand-text">
+                    <strong>URL SENTINEL</strong>
+                    <small>AIC211 SECURITY LAB</small>
+                </span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="#scanner">URL Scanner</a>
+                <a href="#research">Research</a>
+            </nav>
+
+            <span class="header-badge">
+                AI-POWERED ANALYSIS
+            </span>
+
+        </header>
+
+        <main>
+
+            <!-- HERO SECTION -->
+            <section class="hero">
+
+                <div class="eyebrow">
+                    <span class="pulse-dot"></span>
+                    MALICIOUS URL DETECTION & ROBUSTNESS RESEARCH
+                </div>
+
+                <h1>
+                    Detect Threats.
+                    <span>Analyze Smarter.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Hệ thống phân tích URL sử dụng Machine Learning.
+                    So sánh mô hình XGBoost cơ bản với mô hình
+                    được huấn luyện tăng cường khả năng chống chịu.
+                </p>
+
+                <div class="hero-tags">
+                    <span>Machine Learning</span>
+                    <span>XGBoost</span>
+                    <span>Adversarial Training</span>
+                </div>
+
+            </section>
+
+            <!-- SCANNER SECTION -->
+            <section
+                id="scanner"
+                class="scanner-panel"
+                aria-labelledby="scanner-title"
+            >
+
+                <div class="panel-heading">
+
+                    <div>
+                        <span class="section-kicker">
+                            SECURITY ANALYSIS
+                        </span>
+
+                        <h2 id="scanner-title">
+                            URL Threat Scanner
+                        </h2>
+
+                        <p>
+                            Nhập URL để phân tích đặc trưng chuỗi.
+                        </p>
+                    </div>
+
+                    <span class="offline-badge">
+                        STRING ANALYSIS ONLY
+                    </span>
+
+                </div>
+
+                <form id="scan-form" novalidate>
+
+                    <label for="url-input">
+                        TARGET URL
+                    </label>
+
+                    <div class="input-row">
+
+                        <input
+                            id="url-input"
+                            type="text"
+                            placeholder="https://example.com/login"
+                            autocomplete="off"
+                            spellcheck="false"
+                            maxlength="2048"
+                            aria-describedby="url-help"
+                        >
+
+                        <button
+                            id="scan-button"
+                            type="submit"
+                        >
+                            <span>⌕</span>
+                            <span>Scan URL</span>
+                        </button>
+
+                    </div>
+
+                    <p id="url-help" class="input-hint">
+                        Hỗ trợ HTTP và HTTPS.
+                        Hệ thống không truy cập URL được nhập.
+                    </p>
+
+                </form>
+
+                <p
+                    id="status-message"
+                    class="form-status"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+            </section>
+
+            <!-- RESULTS SECTION -->
+            <section
+                id="results-section"
+                class="results-section"
+                hidden
+                aria-labelledby="results-title"
+            >
+
+                <div class="results-heading">
+
+                    <div>
+                        <span class="section-kicker">
+                            AI ANALYSIS REPORT
+                        </span>
+
+                        <h2 id="results-title">
+                            Detection Results
+                        </h2>
+                    </div>
+
+                    <span class="results-label">
+                        TWO-MODEL COMPARISON
+                    </span>
+
+                </div>
+
+                <div class="result-grid">
+
+                    <!-- BASELINE MODEL -->
+                    <article class="result-card">
+
+                        <div class="card-top">
+                            <span class="model-tag">
+                                BASELINE MODEL
+                            </span>
+
+                            <span class="model-icon">01</span>
+                        </div>
+
+                        <h3>XGB-F1</h3>
+
+                        <p class="model-description">
+                            Mô hình XGBoost cơ bản
+                        </p>
+
+                        <div
+                            id="baseline-status"
+                            class="detection-status"
+                        ></div>
+
+                        <div class="score-label">
+                            <span>Model Score</span>
+
+                            <strong id="baseline-score">
+                                0.0000
+                            </strong>
+                        </div>
+
+                        <div class="score-track">
+                            <div
+                                id="baseline-meter"
+                                class="score-fill baseline-fill"
+                            ></div>
+                        </div>
+
+                        <p class="threshold-text">
+                            Detection threshold:
+                            <strong id="baseline-threshold">
+                                0.0000
+                            </strong>
+                        </p>
+
+                    </article>
+
+                    <!-- DEFENDED MODEL -->
+                    <article class="result-card defense-card">
+
+                        <div class="card-top">
+                            <span class="model-tag defense-tag">
+                                ADVERSARIAL TRAINING
+                            </span>
+
+                            <span class="model-icon">02</span>
+                        </div>
+
+                        <h3>XGB-F1-D3</h3>
+
+                        <p class="model-description">
+                            Mô hình được huấn luyện tăng cường
+                        </p>
+
+                        <div
+                            id="defense-status"
+                            class="detection-status"
+                        ></div>
+
+                        <div class="score-label">
+                            <span>Model Score</span>
+
+                            <strong id="defense-score">
+                                0.0000
+                            </strong>
+                        </div>
+
+                        <div class="score-track">
+                            <div
+                                id="defense-meter"
+                                class="score-fill defense-fill"
+                            ></div>
+                        </div>
+
+                        <p class="threshold-text">
+                            Detection threshold:
+                            <strong id="defense-threshold">
+                                0.0000
+                            </strong>
+                        </p>
+
+                    </article>
+
+                </div>
+
+                <div class="analysis-notice">
+                    <strong>Research Notice</strong>
+
+                    <p>
+                        Điểm mô hình không phải xác suất URL an toàn.
+                        Kết quả âm tính không bảo đảm URL vô hại.
+                        Hệ thống không truy cập hoặc tải nội dung website.
+                    </p>
+                </div>
+
+            </section>
+
+            <!-- RESEARCH SECTION -->
+            <section id="research" class="research-section">
+
+                <div class="research-heading">
+                    <span class="section-kicker">
+                        UNDER THE HOOD
+                    </span>
+
+                    <h2>How Our System Works</h2>
+
+                    <p>
+                        Quy trình phát hiện URL dựa trên
+                        các đặc trưng và mô hình đã huấn luyện.
+                    </p>
+                </div>
+
+                <div class="research-grid">
+
+                    <div class="research-card">
+                        <span class="research-number">01</span>
+
+                        <h3>URL Input</h3>
+
+                        <p>
+                            Kiểm tra định dạng URL
+                            mà không truy cập website.
+                        </p>
+                    </div>
+
+                    <div class="research-card">
+                        <span class="research-number">02</span>
+
+                        <h3>Feature Extraction</h3>
+
+                        <p>
+                            Trích xuất đặc trưng chuỗi URL
+                            phục vụ mô hình Machine Learning.
+                        </p>
+                    </div>
+
+                    <div class="research-card">
+                        <span class="research-number">03</span>
+
+                        <h3>AI Detection</h3>
+
+                        <p>
+                            So sánh điểm phát hiện
+                            của hai mô hình XGBoost.
+                        </p>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <footer class="footer">
+            <span>© AIC211 — Malicious URL Detection Research</span>
+            <span>Educational Research Prototype</span>
+        </footer>
+
+    </div>
+
+</body>
+</html>
