@@ -16,8 +16,127 @@ const MODEL_CONFIG = [
     {
         name: "XGB-F1-D3 (Adversarial Training)",
         prefix: "defense"
+    },
+    {
+        name: "XGB-F1 Baseline",
+        prefix: "xgb"
+    },
+    {
+        name: "LR-F2-MultiSource",
+        prefix: "multisource"
+    },
+    {
+        name: "LR-F1F2-Robust",
+        prefix: "fusion"
     }
 ];
+
+
+/* FIVE MODEL UI V1 */
+
+function installExtraModelCards() {
+    const grid = document.querySelector(
+        "#results-section .result-grid"
+    );
+
+    const template = grid?.querySelector(".result-card");
+
+    if (!grid || !template) {
+        throw new Error("Cannot locate existing model card.");
+    }
+
+    const extraModels = [
+        {
+            name: "XGB-F1 Baseline",
+            prefix: "xgb",
+            description: "XGBoost sử dụng đặc trưng từ chuỗi URL."
+        },
+        {
+            name: "LR-F2-MultiSource",
+            prefix: "multisource",
+            description: "Logistic Regression được huấn luyện từ nhiều nguồn dữ liệu."
+        },
+        {
+            name: "LR-F1F2-Robust",
+            prefix: "fusion",
+            description: "Logistic Regression kết hợp đặc trưng URL và n-gram ký tự."
+        }
+    ];
+
+    for (const model of extraModels) {
+        const card = template.cloneNode(true);
+
+        // Give every score, threshold, meter and status a unique ID.
+        card.querySelectorAll("[id]").forEach(element => {
+            if (element.id.startsWith("baseline-")) {
+                element.id = model.prefix +
+                    element.id.slice("baseline".length);
+            } else {
+                element.removeAttribute("id");
+            }
+        });
+
+        if (card.id) {
+            card.id = card.id.startsWith("baseline-")
+                ? model.prefix + card.id.slice("baseline".length)
+                : "";
+        }
+
+        const heading = card.querySelector("h3");
+
+        if (!heading) {
+            throw new Error("Model card heading missing.");
+        }
+
+        heading.textContent = model.name;
+        const modelTag = card.querySelector(".model-tag");
+        if (modelTag) {
+            modelTag.textContent = "ADDITIONAL DETECTION MODEL";
+        }
+
+        const modelIcon = card.querySelector(".model-icon");
+        if (modelIcon) {
+            const modelNumbers = {
+                xgb: "03",
+                multisource: "04",
+                fusion: "05"
+            };
+            modelIcon.textContent = modelNumbers[model.prefix];
+        }
+
+        const description = card.querySelector(
+            ".model-description"
+        );
+
+        if (description) {
+            description.textContent = model.description;
+        }
+
+        const label = card.querySelector(
+            ".model-label, .model-badge, .model-type, .card-kicker"
+        );
+
+        if (label) {
+            label.textContent = "ADDITIONAL MODEL";
+        }
+
+        for (const suffix of [
+            "score", "threshold", "meter", "status"
+        ]) {
+            if (!card.querySelector(
+                `#${model.prefix}-${suffix}`
+            )) {
+                throw new Error(
+                    `Missing ${model.prefix}-${suffix}`
+                );
+            }
+        }
+
+        grid.appendChild(card);
+    }
+}
+
+installExtraModelCards();
 
 function setStatus(message, type = "") {
     statusMessage.textContent = message;
@@ -142,7 +261,7 @@ form.addEventListener("submit", async function (event) {
     buttonLabel.textContent = "Đang phân tích...";
 
     setStatus(
-        "Đang chạy hai mô hình Machine Learning...",
+        "Đang phân tích URL bằng 5 mô hình AI...",
         "loading"
     );
 
@@ -202,11 +321,11 @@ form.addEventListener("submit", async function (event) {
             }
         );
 
-        const primary = validatedResults.find(
-            ({ result }) => result.model === "LR-F2-PhishingAware"
-        ) || validatedResults[0];
+        const suspiciousCount = validatedResults.filter(
+            ({ result }) => result.suspicious
+        ).length;
 
-        const isDanger = primary.result.suspicious;
+        const isDanger = suspiciousCount >= 2;
         applyThreatTheme(isDanger);
 
         resultsSection.hidden = false;
