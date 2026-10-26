@@ -1,4 +1,4 @@
-﻿"""AIC211 URL Detector - FastAPI backend."""
+"""AIC211 URL Detector - FastAPI backend."""
 
 import math
 import sys
@@ -19,7 +19,7 @@ from src.models.detector import URLDetector
 app = FastAPI(title="AIC211 URL Detector API")
 
 MODEL_FILES = {
-    "XGB-F1 Baseline": ROOT / "models" / "xgb_f1.joblib",
+    "LR-F2-PhishingAware": ROOT / "models" / "lr_f2_phishing_aware.joblib",
     "XGB-F1-D3 (Adversarial Training)": (
         ROOT / "models" / "xgb_f1_d3.joblib"
     ),

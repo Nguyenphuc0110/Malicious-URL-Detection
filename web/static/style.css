@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --bg: #080e1b;
     --surface: #111d30;
     --surface-light: #18263d;
@@ -1213,4 +1213,643 @@ body::after {
         display: none !important;
     }
 }
+
+
+/* CYBER REACTIVE THEME V2 */
+
+/* GREEN DIGITAL RAIN */
+.binary-rain {
+    position: fixed !important;
+    top: -8vh !important;
+    bottom: auto !important;
+    height: 116vh !important;
+    width: 94px !important;
+    overflow: hidden;
+    white-space: pre;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 2px;
+    color: #43ff83 !important;
+    opacity: .85 !important;
+    text-shadow:
+        0 0 5px #43ff83,
+        0 0 12px #00ff66,
+        0 0 23px rgba(0,255,100,.65);
+    mask-image: linear-gradient(
+        transparent,
+        black 12%,
+        black 88%,
+        transparent
+    );
+}
+
+.binary-left {
+    left: 7px !important;
+    animation:
+        cyberMoveUp 6s ease-in-out infinite alternate,
+        cyberSparkle 1.8s ease-in-out infinite alternate;
+}
+
+.binary-right {
+    right: 7px !important;
+    animation:
+        cyberMoveDown 7s ease-in-out infinite alternate,
+        cyberSparkle 2.3s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes cyberMoveUp {
+    from { transform: translateY(5vh); }
+    to   { transform: translateY(-5vh); }
+}
+
+@keyframes cyberMoveDown {
+    from { transform: translateY(-5vh); }
+    to   { transform: translateY(5vh); }
+}
+
+@keyframes cyberSparkle {
+    0% {
+        opacity: .42;
+        filter: brightness(.8);
+    }
+    35% {
+        opacity: 1;
+        filter: brightness(1.8);
+    }
+    65% {
+        opacity: .63;
+        filter: brightness(1.1);
+    }
+    100% {
+        opacity: .95;
+        filter: brightness(1.6);
+    }
+}
+
+/* DANGER: RED-BLACK FULL PAGE */
+body.danger-mode {
+    background:
+        radial-gradient(
+            ellipse at 50% 20%,
+            rgba(185, 10, 24, .23),
+            transparent 55%
+        ),
+        linear-gradient(
+            160deg,
+            #190305 0%,
+            #0b0305 48%,
+            #030203 100%
+        ) !important;
+    color: #ffe8e8 !important;
+}
+
+body.danger-mode::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 0, 0, .025) 0px,
+        rgba(255, 0, 0, .025) 1px,
+        transparent 1px,
+        transparent 5px
+    );
+}
+
+body.danger-mode .binary-rain {
+    color: #ff4055 !important;
+    text-shadow:
+        0 0 6px #ff4055,
+        0 0 15px #d60028,
+        0 0 28px rgba(255,0,0,.85);
+}
+
+body.danger-mode :is(
+    header,
+    nav,
+    main,
+    section,
+    article,
+    footer,
+    .card,
+    .panel,
+    .hero,
+    .scanner-card,
+    .result-card,
+    #results-section
+) {
+    background: linear-gradient(
+        145deg,
+        rgba(27, 5, 9, .94),
+        rgba(8, 3, 6, .92)
+    ) !important;
+    border-color: rgba(255, 65, 75, .27) !important;
+    box-shadow:
+        0 0 22px rgba(255, 0, 25, .09) !important;
+}
+
+body.danger-mode :is(
+    a,
+    .badge,
+    .chip,
+    .tag,
+    .section-label,
+    .eyebrow
+) {
+    color: #ff707a !important;
+    border-color: rgba(255, 75, 85, .35) !important;
+}
+
+body.danger-mode :is(
+    button,
+    #scan-button
+) {
+    background: linear-gradient(
+        135deg,
+        #8b071c,
+        #ff3046
+    ) !important;
+    color: white !important;
+    border-color: #ff5362 !important;
+    box-shadow: 0 0 23px rgba(255, 20, 45, .35) !important;
+}
+
+body.danger-mode :is(
+    input,
+    textarea,
+    #url-input
+) {
+    background: #130508 !important;
+    border-color: #7f2632 !important;
+    color: #fff1f1 !important;
+}
+
+body.danger-mode :is(
+    h1,
+    h2,
+    h3,
+    h1 span,
+    h2 span,
+    h3 span
+) {
+    color: #ffd9df !important;
+    -webkit-text-fill-color: #ffd9df !important;
+    background-image: none !important;
+}
+
+/* FRACTURED / CRACKED HEADINGS */
+.cyber-cracked {
+    position: relative;
+    isolation: isolate;
+    text-shadow:
+        2px 0 #ff173b,
+        -2px 0 #53000c,
+        0 0 18px rgba(255,25,45,.6) !important;
+    animation: cyberShatter .16s steps(2) 5;
+}
+
+.cyber-cracked::before,
+.cyber-cracked::after {
+    content: attr(data-crack-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    color: #ffe9e9;
+    -webkit-text-fill-color: #ffe9e9;
+    font: inherit;
+    letter-spacing: inherit;
+}
+
+.cyber-cracked::before {
+    clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 42%,
+        58% 46%,
+        49% 56%,
+        0 51%
+    );
+    transform: translate(-3px, -2px);
+    text-shadow: 3px 0 #ff1635;
+}
+
+.cyber-cracked::after {
+    clip-path: polygon(
+        0 53%,
+        47% 58%,
+        58% 48%,
+        100% 44%,
+        100% 100%,
+        0 100%
+    );
+    transform: translate(3px, 2px);
+    text-shadow: -3px 0 #810018;
+}
+
+@keyframes cyberShatter {
+    0%, 100% {
+        transform: translate(0);
+    }
+    25% {
+        transform: translate(2px, -1px);
+    }
+    50% {
+        transform: translate(-2px, 1px);
+    }
+    75% {
+        transform: translate(1px, 2px);
+    }
+}
+
+/* SMOOTH THEME SWITCH */
+body,
+body header,
+body section,
+body article,
+body button,
+body input {
+    transition:
+        background-color .4s ease,
+        border-color .4s ease,
+        color .4s ease,
+        box-shadow .4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .binary-left,
+    .binary-right,
+    .cyber-cracked {
+        animation: none !important;
+    }
+
+    .cyber-cracked::before,
+    .cyber-cracked::after {
+        transform: none;
+    }
+}
+
+
+/* MATRIX INDEPENDENT COLUMNS V3 */
+
+.binary-rain,
+.binary-left,
+.binary-right {
+    position: fixed !important;
+    top: 0 !important;
+    bottom: auto !important;
+
+    width: 116px !important;
+    height: 100vh !important;
+
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 2px !important;
+
+    padding: 0 6px !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+    white-space: normal !important;
+
+    pointer-events: none !important;
+    user-select: none !important;
+    z-index: 1 !important;
+
+    /* Disable old whole-side movement. */
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    text-shadow: none !important;
+
+    --digit-rgb: 58, 255, 130;
+
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 8%,
+        black 92%,
+        transparent 100%
+    ) !important;
+
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        black 8%,
+        black 92%,
+        transparent 100%
+    ) !important;
+}
+
+.binary-left {
+    left: 0 !important;
+    right: auto !important;
+}
+
+.binary-right {
+    right: 0 !important;
+    left: auto !important;
+}
+
+/* One independent track = one vertical column. */
+.binary-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.binary-stream {
+    position: absolute;
+    left: 0;
+    top: -10vh;
+
+    width: 100%;
+    height: 120vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+
+    will-change: transform;
+}
+
+/* Column 1 up, column 2 down, column 3 up. */
+.binary-track.go-up .binary-stream {
+    animation: matrixColumnUp 7s linear infinite alternate;
+}
+
+.binary-track.go-down .binary-stream {
+    animation: matrixColumnDown 7s linear infinite alternate;
+}
+
+@keyframes matrixColumnUp {
+    from {
+        transform: translateY(5vh);
+    }
+    to {
+        transform: translateY(-5vh);
+    }
+}
+
+@keyframes matrixColumnDown {
+    from {
+        transform: translateY(-5vh);
+    }
+    to {
+        transform: translateY(5vh);
+    }
+}
+
+/* LARGE, INDIVIDUALLY SPARKLING 0/1 */
+.binary-rain .binary-bit {
+    display: block;
+
+    font-family: Consolas, "Courier New", monospace !important;
+    font-size: clamp(20px, 1.5vw, 24px) !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: 0 !important;
+
+    color: rgb(var(--digit-rgb)) !important;
+    text-align: center;
+
+    opacity: 0.14;
+
+    text-shadow:
+        0 0 3px rgba(var(--digit-rgb), 0.4) !important;
+
+    animation: matrixFlash 3.6s ease-in-out infinite;
+
+    will-change: opacity, filter, text-shadow;
+}
+
+/* One bright flash, then slowly fade out. */
+@keyframes matrixFlash {
+    0% {
+        opacity: 0.12;
+        filter: brightness(0.6);
+        text-shadow:
+            0 0 2px rgba(var(--digit-rgb), 0.2);
+    }
+
+    12% {
+        opacity: 0.16;
+        filter: brightness(0.7);
+    }
+
+    18% {
+        opacity: 1;
+        filter: brightness(2.3);
+
+        text-shadow:
+            0 0 7px rgba(var(--digit-rgb), 1),
+            0 0 17px rgba(var(--digit-rgb), 0.95),
+            0 0 32px rgba(var(--digit-rgb), 0.8),
+            0 0 48px rgba(var(--digit-rgb), 0.45);
+    }
+
+    27% {
+        opacity: 0.75;
+        filter: brightness(1.5);
+    }
+
+    42% {
+        opacity: 0.38;
+        filter: brightness(1);
+    }
+
+    65% {
+        opacity: 0.17;
+        filter: brightness(0.7);
+    }
+
+    100% {
+        opacity: 0.10;
+        filter: brightness(0.5);
+        text-shadow:
+            0 0 2px rgba(var(--digit-rgb), 0.15);
+    }
+}
+
+/* Switch every digit to red in danger mode. */
+body.danger-mode .binary-rain {
+    --digit-rgb: 255, 48, 73;
+}
+
+/* Preserve accessibility. */
+@media (prefers-reduced-motion: reduce) {
+    .binary-track .binary-stream,
+    .binary-rain .binary-bit {
+        animation: none !important;
+        transform: none !important;
+    }
+
+    .binary-rain .binary-bit {
+        opacity: 0.55 !important;
+    }
+}
+
+/* Narrow screens: don't cover the content. */
+@media (max-width: 700px) {
+    .binary-rain {
+        width: 54px !important;
+        padding: 0 2px !important;
+        opacity: 0.35 !important;
+    }
+
+    .binary-rain .binary-bit {
+        font-size: 15px !important;
+    }
+}
+
+/* ===== HERO TITLE HOTFIX: crack effect like "URL Threat Scanner" ===== */
+
+body.threat-mode .hero-title::before,
+body.threat-mode .hero-title::after,
+body.threat-mode .hero-title span::before {
+    content: none !important;
+}
+
+body.threat-mode .hero-title {
+    position: relative;
+    isolation: isolate;
+}
+
+body.threat-mode .hero-title span {
+    position: relative;
+    display: block;
+    color: #ffe8ee !important;
+    text-shadow:
+        0 0 10px rgba(255, 40, 80, 0.45),
+        0 0 22px rgba(255, 20, 60, 0.25),
+        2px 0 0 rgba(255, 30, 70, 0.35);
+}
+
+/* dùng 1 vết nứt mảnh giống dòng URL Threat Scanner */
+body.threat-mode .hero-title span::after {
+    content: "";
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    top: 52%;
+    height: 3px;
+    border-radius: 999px;
+    pointer-events: none;
+    opacity: 0.95;
+    background:
+        linear-gradient(
+            100deg,
+            transparent 0%,
+            rgba(255,255,255,0.00) 8%,
+            rgba(255,245,248,0.95) 18%,
+            rgba(255,70,100,0.98) 40%,
+            rgba(110,0,20,0.95) 52%,
+            rgba(255,90,120,0.98) 68%,
+            rgba(255,235,240,0.90) 82%,
+            transparent 100%
+        );
+    box-shadow:
+        0 0 8px rgba(255, 40, 80, 0.35),
+        0 0 14px rgba(255, 10, 50, 0.18);
+}
+
+/* dòng 1 */
+body.threat-mode .hero-title span:nth-child(1)::after {
+    transform: translateY(-50%) skewX(-18deg) rotate(-2deg);
+}
+
+/* dòng 2 */
+body.threat-mode .hero-title span:nth-child(2)::after {
+    transform: translateY(-50%) skewX(14deg) rotate(1deg);
+}
+/* HERO TITLE ONLY FIX V9 */
+
+/* Remove duplicated copies from the large hero heading ONLY */
+body.danger-mode h1::before,
+body.danger-mode h1::after,
+body.danger-mode h1.cyber-cracked::before,
+body.danger-mode h1.cyber-cracked::after,
+body.danger-mode h1 .cyber-cracked::before,
+body.danger-mode h1 .cyber-cracked::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Small fractures inside the original letters, without text copies */
+body.danger-mode h1,
+body.danger-mode h1 span {
+    background-image: linear-gradient(
+        175deg,
+        #ffe4e9 0%,
+        #ffe4e9 43%,
+        #650014 43.3%,
+        #ff4364 43.8%,
+        #ffe4e9 44.4%,
+        #ffe4e9 56%,
+        #79001b 56.3%,
+        #ff7189 56.8%,
+        #ffe4e9 57.4%,
+        #ffe4e9 100%
+    ) !important;
+
+    background-clip: text !important;
+    -webkit-background-clip: text !important;
+
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+
+    text-shadow: none !important;
+    filter: drop-shadow(
+        0 0 7px rgba(255, 35, 65, 0.7)
+    ) !important;
+}
+
+/* Other headings and normal green theme stay unchanged */
+
+
+/* FULL SCREEN RED BACKGROUND V10 */
+
+/* Red-black background for the entire browser viewport */
+html:has(body.danger-mode) {
+    background-color: #100205 !important;
+    background-image: none !important;
+}
+
+body.danger-mode {
+    background-color: #100205 !important;
+
+    background-image:
+        radial-gradient(
+            ellipse at 50% 25%,
+            rgba(100, 0, 22, 0.22) 0%,
+            transparent 65%
+        ),
+        linear-gradient(
+            180deg,
+            #190308 0%,
+            #100205 55%,
+            #090104 100%
+        ) !important;
+
+    background-attachment: fixed !important;
+}
+
+/* Remove the old cyan background glow in danger mode */
+body.danger-mode::before,
+body.danger-mode::after {
+    background-image: none !important;
+    background-color: transparent !important;
+}
+
+/* Normal green mode and all Matrix animations are unchanged */
 

@@ -1,4 +1,4 @@
-﻿"use strict";
+"use strict";
 
 const form = document.getElementById("scan-form");
 const urlInput = document.getElementById("url-input");
@@ -10,7 +10,7 @@ const resultsSection = document.getElementById("results-section");
 
 const MODEL_CONFIG = [
     {
-        name: "XGB-F1 Baseline",
+        name: "LR-F2-PhishingAware",
         prefix: "baseline"
     },
     {
@@ -103,10 +103,29 @@ function renderModel(result, prefix) {
     }
 }
 
+
+function applyThreatTheme(isDanger) {
+    document.body.classList.toggle("danger-mode", isDanger);
+
+    document.querySelectorAll("h1, h2, h3").forEach((heading) => {
+        if (!heading.hasAttribute("data-crack-text")) {
+            heading.setAttribute(
+                "data-crack-text",
+                heading.textContent.trim().replace(/\\s+/g, " ")
+            );
+        }
+
+        heading.classList.toggle("cyber-cracked", isDanger);
+    });
+}
+
+applyThreatTheme(false);
+
 form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     resultsSection.hidden = true;
+    applyThreatTheme(false);
     setStatus("");
 
     let url;
@@ -183,6 +202,13 @@ form.addEventListener("submit", async function (event) {
             }
         );
 
+        const primary = validatedResults.find(
+            ({ result }) => result.model === "LR-F2-PhishingAware"
+        ) || validatedResults[0];
+
+        const isDanger = primary.result.suspicious;
+        applyThreatTheme(isDanger);
+
         resultsSection.hidden = false;
 
         setStatus("Phân tích hoàn tất.");
@@ -207,54 +233,70 @@ form.addEventListener("submit", async function (event) {
     }
 });
 
-/* DIGITAL FORENSIC BINARY V1 */
+
+/* DIGITAL FORENSIC BINARY V3 */
 
 (function () {
-    if (document.querySelector(".binary-rain")) {
-        return;
-    }
+    document.querySelectorAll(".binary-rain").forEach(el => el.remove());
 
-    function createColumn(side) {
-        const element = document.createElement("div");
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
 
-        element.className = "binary-rain binary-" + side;
-        element.setAttribute("aria-hidden", "true");
+    function createSide(side) {
+        const container = document.createElement("div");
+        container.className = "binary-rain binary-" + side;
+        container.setAttribute("aria-hidden", "true");
 
-        document.body.appendChild(element);
+        for (let column = 0; column < 3; column++) {
+            const track = document.createElement("div");
 
-        return element;
-    }
+            // Alternate each column, not the entire side.
+            const up = (column + (side === "right" ? 1 : 0)) % 2 === 0;
 
-    const left = createColumn("left");
-    const right = createColumn("right");
+            track.className = "binary-track " + (
+                up ? "go-up" : "go-down"
+            );
 
-    function generateBinary() {
-        const lines = [];
+            const stream = document.createElement("div");
+            stream.className = "binary-stream";
 
-        for (let i = 0; i < 55; i++) {
-            let line = "";
+            // Fill the height with individual glowing digits.
+            for (let row = 0; row < 52; row++) {
+                const digit = document.createElement("span");
 
-            for (let j = 0; j < 5; j++) {
-                line += Math.random() < 0.5 ? "0  " : "1  ";
+                digit.className = "binary-bit";
+                digit.textContent = Math.random() < 0.5 ? "0" : "1";
+
+                // Stagger flashes: digits don't light up together.
+                digit.style.animationDelay =
+                    `-${(Math.random() * 4.5).toFixed(2)}s`;
+
+                digit.style.animationDuration =
+                    `${(2.8 + Math.random() * 2.6).toFixed(2)}s`;
+
+                stream.appendChild(digit);
             }
 
-            lines.push(line.trim());
+            track.appendChild(stream);
+            container.appendChild(track);
         }
 
-        return lines.join("\n");
+        document.body.appendChild(container);
     }
 
-    function updateBinary() {
-        left.textContent = generateBinary();
-        right.textContent = generateBinary();
-    }
+    createSide("left");
+    createSide("right");
 
-    updateBinary();
-
-    if (!window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-    ).matches) {
-        setInterval(updateBinary, 6000);
+    // Occasionally change individual bits.
+    if (!reducedMotion) {
+        setInterval(() => {
+            document.querySelectorAll(".binary-bit").forEach(bit => {
+                if (Math.random() < 0.08) {
+                    bit.textContent =
+                        Math.random() < 0.5 ? "0" : "1";
+                }
+            });
+        }, 1800);
     }
 })();
-
