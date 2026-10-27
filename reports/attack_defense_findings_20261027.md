@@ -85,3 +85,72 @@ Research branch: research/attack-defense
 
 *Figure 3. Paired T1 evaluation on 499 commonly detected URLs. D3 training provenance remains unverified.*
 
+## 9. Reproducibility
+
+### 9.1. Experimental Setup
+
+The experiments were performed using Python on the
+research/attack-defense Git branch.
+
+Required resources:
+- Dataset: data/processed/handoff/test_A.csv
+- Five trained machine learning models
+- Attack and Defense source code
+
+The experiments sampled 1,000 malicious URLs using
+random seed 42.
+
+### 9.2. Reproduction Commands
+
+Run these commands from the repository root:
+
+    python -m src.evaluation.export_d1_t1_rows
+    python -m src.evaluation.export_d2_t7_rows
+    python -m src.evaluation.export_d3_t1_rows
+
+Use the Python environment with the required dependencies
+installed.
+
+Before rerunning, back up existing row-level CSV outputs
+because the scripts do not overwrite them.
+
+### 9.3. Expected Experimental Results
+
+| Experiment | Eligible URLs | Before | After |
+|---|---:|---:|---:|
+| T1 - D1 (Voting 2/5) | 667 | 31.18% | 21.14% |
+| T7 - D2 (Voting 2/5) | 504 | 9.33% | 0.00% |
+| T1 - D3 (XGBoost comparison) | 499 | 38.08% | 24.85% |
+
+**Interpretation note:** For T1-D1 and T7-D2, "Before" and
+"After" indicate results before and after URL normalization.
+
+For T1-D3, 38.08% represents XGB-F1 Baseline, while
+24.85% represents XGB-F1-D3. These are two different
+models evaluated on the same 499 initially detected URLs,
+not one model measured before and after preprocessing.
+
+### 9.4. Research Data
+
+Detailed results are stored locally:
+
+- reports/d1_t1_row_level_20261027.csv
+- reports/d2_t7_row_level_20261027.csv
+- reports/d3_t1_row_level_20261027.csv
+
+These files contain per-sample prediction results.
+They should not be published without reviewing
+potential data privacy and reconstruction risks.
+
+### 9.5. Experimental Limitations
+
+- D1 measures changes in detection after URL canonicalization.
+- D2 restored 814 evaluated transformed URL strings,
+  but this does not prove real-world phishing prevention.
+- D3 showed lower T1 flip-down rates than XGB-F1 Baseline
+  on the same 499 initially detected URLs.
+- The training provenance of XGB-F1-D3 remains unverified.
+- D1, D2, and D3 use different eligible samples and
+  should not be directly ranked against each other.
+- The experiments analyze URL strings without visiting
+  the websites.
