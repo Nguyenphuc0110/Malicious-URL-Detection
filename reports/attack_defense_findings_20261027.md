@@ -58,13 +58,21 @@ Research branch: research/attack-defense
 - D1, D2 and D3 results use different eligible samples and must not be directly ranked as equivalent metrics.
 - The experiments do not establish that the five-model website can safely classify every URL.
 
-## 7. Next Steps
+## 7. Research Status and Remaining Work
 
-1. Verify model D3 training provenance.
-2. Evaluate benign Unicode/Punycode URLs for D2 false positives.
-3. Save reproducible per-URL evaluation outputs.
-4. Prepare final charts and presentation tables.
+### Completed
 
+1. Evaluated T1 attack against D1 canonicalization.
+2. Evaluated T7 attack against D2 homoglyph normalization.
+3. Compared XGB-F1 Baseline and XGB-F1-D3 on paired T1 samples.
+4. Exported reproducible per-URL evaluation results for D1, D2, and D3.
+5. Prepared three comparison figures and a research findings report.
+
+### Remaining Work
+
+1. Verify the training provenance of XGB-F1-D3.
+2. Evaluate false positives on benign Unicode/Punycode URLs.
+3. Prepare final presentation tables and research conclusions.
 ## 8. Research Figures
 
 ### Figure 1. T1 Attack vs D1 Defense
