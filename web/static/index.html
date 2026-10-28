@@ -63,7 +63,7 @@
 
                 <p class="hero-description">
                     Hệ thống phân tích URL sử dụng Machine Learning.
-                    So sánh kết quả của 5 mô hình AI: LR-F2-PhishingAware, XGB-F1-D3, XGB-F1 Baseline, LR-F2-MultiSource và LR-F1F2-Robust.
+                    So sánh kết quả của 5 mô hình AI: LR-F1, RF-F1, XGB-F1 Baseline, LR-F2-MultiSource và LR-F1F2-Robust.
                 </p>
 
                 <div class="hero-tags">
@@ -186,7 +186,7 @@
                             <span class="model-icon">01</span>
                         </div>
 
-                        <h3>LR-F2-PhishingAware</h3>
+                        <h3>LR-F1</h3>
 
                         <p class="model-description">
                             Mô hình Logistic Regression dùng đặc trưng n-gram ký tự
@@ -226,13 +226,13 @@
 
                         <div class="card-top">
                             <span class="model-tag defense-tag">
-                                ADVERSARIAL TRAINING
+                                RANDOM FOREST MODEL
                             </span>
 
                             <span class="model-icon">02</span>
                         </div>
 
-                        <h3>XGB-F1-D3</h3>
+                        <h3>RF-F1</h3>
 
                         <p class="model-description">
                             Mô hình được huấn luyện tăng cường
@@ -281,7 +281,203 @@
 
             </section>
 
-            <!-- RESEARCH SECTION -->
+            <!-- ORIGINAL BASELINE PERFORMANCE -->
+<section
+    id="baseline-performance"
+    class="research-section baseline-performance-section"
+    aria-labelledby="baseline-performance-title"
+>
+    <div class="research-heading">
+        <span class="section-kicker">
+            OFFLINE MODEL EVALUATION
+        </span>
+
+        <h2 id="baseline-performance-title">
+            Original Baseline Model Performance
+        </h2>
+    </div>
+
+    <p class="baseline-performance-note">
+        Evaluation dataset: test_A | 67,278 URLs.
+        Results from the five original AIC211 machine learning models.
+    </p>
+
+    <div class="baseline-performance-scroll">
+        <table class="baseline-performance-table">
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>F1-score</th>
+                    <th>F2-score</th>
+                    <th>FPR</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>LR-F1</td>
+                    <td>71.01%</td>
+                    <td>16.83%</td>
+                    <td>27.21%</td>
+                    <td>19.86%</td>
+                    <td>2.02%</td>
+                </tr>
+
+                <tr>
+                    <td>RF-F1</td>
+                    <td>90.86%</td>
+                    <td>50.81%</td>
+                    <td>65.18%</td>
+                    <td>55.72%</td>
+                    <td>1.50%</td>
+                </tr>
+
+                <tr>
+                    <td>XGB-F1</td>
+                    <td>89.46%</td>
+                    <td>52.17%</td>
+                    <td>65.91%</td>
+                    <td>56.92%</td>
+                    <td>1.81%</td>
+                </tr>
+
+                <tr>
+                    <td>LR-F2</td>
+                    <td>88.41%</td>
+                    <td>60.05%</td>
+                    <td>71.52%</td>
+                    <td>64.17%</td>
+                    <td>2.32%</td>
+                </tr>
+
+                <tr>
+                    <td>SVM-F2</td>
+                    <td>88.96%</td>
+                    <td>57.59%</td>
+                    <td>69.92%</td>
+                    <td>61.96%</td>
+                    <td>2.10%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="baseline-performance-note">
+        Source: baseline_results.csv, test_A.
+        These metrics describe offline evaluation of the original
+        baseline models, not the models currently used for live scanning.
+    </p>
+</section>
+            <!-- MODEL SCORE EXPLANATION -->
+<section id="score-explanation"
+         class="research-section score-explanation-section">
+
+    <div class="research-heading">
+        <span class="section-kicker">AI EXPLAINABILITY</span>
+        <h2>How AI Model Scores Are Calculated</h2>
+    </div>
+
+    <p class="baseline-performance-note">
+        Each model converts a URL into numerical features
+        and calculates a score for the malicious class.
+        F1 and F2 in model names refer to feature sets,
+        not the F1-score and F2-score evaluation metrics.
+    </p>
+
+    <div class="score-formula-grid">
+
+        <article class="score-formula-card">
+            <span class="section-kicker">LOGISTIC REGRESSION</span>
+            <h3>LR-F1 and LR-F2</h3>
+            <div class="score-formula">
+                z = b + SUM(w_i * x_i)
+            </div>
+            <div class="score-formula">
+                Model Score = 1 / (1 + exp(-z))
+            </div>
+            <p>
+                x_i: URL feature<br>
+                w_i: learned weight<br>
+                b: learned intercept
+            </p>
+        </article>
+
+        <article class="score-formula-card">
+            <span class="section-kicker">RANDOM FOREST</span>
+            <h3>RF-F1</h3>
+            <div class="score-formula">
+                Model Score = SUM(P_tree_i(malicious | x)) / T
+            </div>
+            <p>
+                T: total number of trees.<br>
+                The score is the average predicted probability
+                for the malicious class across the trees.
+            </p>
+        </article>
+
+        <article class="score-formula-card">
+            <span class="section-kicker">XGBOOST</span>
+            <h3>XGB-F1</h3>
+            <div class="score-formula">
+                z = base_margin + SUM(tree_k(x))
+            </div>
+            <div class="score-formula">
+                Model Score = 1 / (1 + exp(-z))
+            </div>
+            <p>
+                Each boosted tree contributes to the combined
+                prediction margin for binary logistic output.
+            </p>
+        </article>
+
+        <article class="score-formula-card">
+            <span class="section-kicker">SUPPORT VECTOR MACHINE</span>
+            <h3>SVM-F2</h3>
+            <div class="score-formula">
+                margin = decision_function(x)
+            </div>
+            <div class="score-formula">
+                Score = 1 / (1 + exp(-margin))
+            </div>
+            <p>
+                This is the backend fallback when predict_proba
+                is unavailable. A sigmoid-transformed decision
+                margin is not necessarily a calibrated probability.
+            </p>
+        </article>
+
+    </div>
+
+    <article class="score-formula-card score-decision-example">
+        <span class="section-kicker">DECISION RULE</span>
+        <h3>How a Model Makes Its Decision</h3>
+
+        <div class="score-formula">
+            Model Score &gt;= Threshold : Suspicious URL
+        </div>
+
+        <div class="score-formula">
+            Model Score &lt; Threshold : No Alert
+        </div>
+
+        <p>
+            The backend uses predict_proba(X)[:, 1] when
+            available, or applies a sigmoid transformation
+            to decision_function(X) otherwise.
+        </p>
+    </article>
+
+    <p class="baseline-performance-note">
+        The table above reports offline test_A metrics for
+        these same five original baseline models.
+        Model Score changes for each scanned URL.
+        Precision, Recall, F1, F2 and FPR do not.
+    </p>
+
+</section>
+<!-- RESEARCH SECTION -->
             <section id="research" class="research-section">
 
                 <div class="research-heading">

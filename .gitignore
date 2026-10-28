@@ -25,3 +25,6 @@ data/external/
 .DS_Store
 Thumbs.db
 
+
+# RF-F1 is stored outside Git
+models/rf_f1.joblib

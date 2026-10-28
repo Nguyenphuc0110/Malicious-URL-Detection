@@ -5,6 +5,7 @@ import json
 import subprocess
 import sys
 import threading
+import os
 from pathlib import Path
 from urllib.parse import urlsplit
 
@@ -19,12 +20,18 @@ sys.path.insert(0, str(ROOT))
 
 app = FastAPI(title="AIC211 URL Detector API")
 
+BASELINE_MODEL_DIR = Path(__file__).resolve().parents[1] / "models"
+RF_F1_MODEL_PATH = Path(os.environ.get(
+    "RF_F1_MODEL_PATH",
+    str(BASELINE_MODEL_DIR / "rf_f1.joblib")
+))
+
 MODEL_FILES = {
-    "LR-F2-PhishingAware": ROOT / "models" / "lr_f2_phishing_aware.joblib",
-    "XGB-F1-D3 (Adversarial Training)": ROOT / "models" / "xgb_f1_d3.joblib",
-    "XGB-F1 Baseline": ROOT / "models" / "xgb_f1.joblib",
-    "LR-F2-MultiSource": ROOT / "models" / "lr_f2_multisource.joblib",
-    "LR-F1F2-Robust": ROOT / "models" / "lr_f1f2_robust.joblib",
+    "LR-F1": BASELINE_MODEL_DIR / "lr_f1.joblib",
+    "RF-F1": RF_F1_MODEL_PATH,
+    "XGB-F1": BASELINE_MODEL_DIR / "xgb_f1.joblib",
+    "LR-F2": BASELINE_MODEL_DIR / "lr_f2.joblib",
+    "SVM-F2": BASELINE_MODEL_DIR / "svm_f2.joblib",
 }
 
 class ScanRequest(BaseModel):

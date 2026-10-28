@@ -10,23 +10,23 @@ const resultsSection = document.getElementById("results-section");
 
 const MODEL_CONFIG = [
     {
-        name: "LR-F2-PhishingAware",
+        name: "LR-F1",
         prefix: "baseline"
     },
     {
-        name: "XGB-F1-D3 (Adversarial Training)",
+        name: "RF-F1",
         prefix: "defense"
     },
     {
-        name: "XGB-F1 Baseline",
+        name: "XGB-F1",
         prefix: "xgb"
     },
     {
-        name: "LR-F2-MultiSource",
+        name: "LR-F2",
         prefix: "multisource"
     },
     {
-        name: "LR-F1F2-Robust",
+        name: "SVM-F2",
         prefix: "fusion"
     }
 ];
@@ -47,17 +47,17 @@ function installExtraModelCards() {
 
     const extraModels = [
         {
-            name: "XGB-F1 Baseline",
+            name: "XGB-F1",
             prefix: "xgb",
             description: "XGBoost sử dụng đặc trưng từ chuỗi URL."
         },
         {
-            name: "LR-F2-MultiSource",
+            name: "LR-F2",
             prefix: "multisource",
             description: "Logistic Regression được huấn luyện từ nhiều nguồn dữ liệu."
         },
         {
-            name: "LR-F1F2-Robust",
+            name: "SVM-F2",
             prefix: "fusion",
             description: "Logistic Regression kết hợp đặc trưng URL và n-gram ký tự."
         }

@@ -11,11 +11,11 @@ from src.models.detector import URLDetector
 
 
 ORDER = [
-    "LR-F2-PhishingAware",
-    "LR-F2-MultiSource",
-    "LR-F1F2-Robust",
-    "XGB-F1-D3 (Adversarial Training)",
-    "XGB-F1 Baseline",
+    "LR-F1",
+    "RF-F1",
+    "XGB-F1",
+    "LR-F2",
+    "SVM-F2",
 ]
 
 
