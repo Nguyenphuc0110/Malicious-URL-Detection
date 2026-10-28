@@ -21,10 +21,7 @@ sys.path.insert(0, str(ROOT))
 app = FastAPI(title="AIC211 URL Detector API")
 
 BASELINE_MODEL_DIR = Path(__file__).resolve().parents[1] / "models"
-RF_F1_MODEL_PATH = Path(os.environ.get(
-    "RF_F1_MODEL_PATH",
-    str(BASELINE_MODEL_DIR / "rf_f1.joblib")
-))
+RF_F1_MODEL_PATH = BASELINE_MODEL_DIR / "rf_f1_lite.joblib"
 
 MODEL_FILES = {
     "LR-F1": BASELINE_MODEL_DIR / "lr_f1.joblib",
